@@ -35,5 +35,15 @@ module SegdevDesafio2
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+    
+    config.time_zone = "Brasilia"
+
+    config.i18n.enforce_available_locales = false
+    config.i18n.available_locales = %i[pt-BR en]
+    config.i18n.default_locale = :'pt-BR'
+
+    config.i18n.load_path += Dir["#{Rails.root}/config/locales/**/*.{rb,yml}"]
+
+    config.active_record.yaml_column_permitted_classes = [Symbol, Date, Time, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone]
   end
 end

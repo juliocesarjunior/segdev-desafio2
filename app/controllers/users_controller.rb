@@ -26,7 +26,7 @@ class UsersController < ApplicationController
 
     puts scores
 
-    if user.house['ownership_status'] == 'rented'
+    if user.house && user.house['ownership_status'] == 'rented'
       scores[:home] += 1
       scores[:disability] += 1
       puts "## 1: #{scores}"
