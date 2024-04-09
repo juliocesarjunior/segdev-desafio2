@@ -2,7 +2,7 @@ class UsersController < ApplicationController
   def create
     user = User.new(user_params)
     if user.save
-      render json: calculate_risk(user), status: :created
+      render json: calculate_insurance_scores(user), status: :created
     else
       render json: user.errors, status: :unprocessable_entity
     end
@@ -14,29 +14,82 @@ class UsersController < ApplicationController
     params.require(:user).permit!
   end
 
-  def calculate_risk(user)
-    base_score = user.risk_questions.sum
-    base_score -= 2 if user.age < 30
-    base_score -= 1 if user.age >= 30 && user.age <= 40
-    base_score -= 1 if user.income > 200_000
+  def calculate_insurance_scores(user)
+    initial_scores = user.risk_questions.sum
 
-    risk_scores = {
-      auto: base_score,
-      disability: user.income.zero? ? 'ineligible' : base_score,
-      home: user.house['ownership_status'] == 'mortgaged' ? base_score + 1 : base_score,
-      life: user.age > 60 ? 'ineligible' : (user.marital_status == 'married' ? base_score + 1 : base_score)
+    scores = {
+      auto: initial_scores,
+      disability: initial_scores,
+      home: initial_scores,
+      life: initial_scores
     }
 
-    risk_scores.each { |key, value| risk_scores[key] = calculate_risk_category(value) }
+    puts scores
 
-    risk_scores
-  end
-
-  def calculate_risk_category(score)
-    case score
-    when 0..-Float::INFINITY then 'economic'
-    when 1..2 then 'regular'
-    else 'responsible'
+    if user.house['ownership_status'] == 'rented'
+      scores[:home] += 1
+      scores[:disability] += 1
+      puts "## 1: #{scores}"
     end
+
+    if user.dependents > 0
+      scores[:life] += 1
+      scores[:disability] += 1
+      puts "## 2: #{scores}"
+    end
+
+    if user.marital_status == 'married'
+      scores[:life] += 1
+      scores[:disability] -= 1
+      puts "## 3: #{scores}"
+    end
+    if user.vehicle && user.vehicle['year'] && Time.now.year - user.vehicle['year'] <= 5
+      scores[:auto] += 1
+      puts "## 4: #{scores}"
+    end
+    if user.income > 200_000
+      scores.each_key { |key| scores[key] -= 1 }
+      puts "## 5: #{scores}"
+    elsif user.age < 30
+      scores.each_key { |key| scores[key] -= 2 }
+      puts "## 6: #{scores}"
+    elsif user.age >= 30 && user.age <= 40
+      scores.each_key { |key| scores[key] -= 1 }
+      puts "## 6: #{scores}"
+    end
+
+    if user.age > 60
+      scores[:disability] = 'inelegivel'
+      scores[:life] = 'inelegivel'
+    end
+
+    if user.income <= 0
+      scores[:disability] = 'inelegivel'
+    end
+
+    if user.vehicle.nil? || user.vehicle.empty?
+      scores[:auto] = 'inelegivel'
+    end
+
+    if user.house.nil? || user.house.empty?
+      scores[:home] = 'inelegivel'
+    end
+
+    mapped_scores = {}
+    scores.each do |key, value|
+      case value
+      when 'inelegivel'
+        mapped_scores[key] = 'inelegivel'
+      when -Float::INFINITY..0
+        mapped_scores[key] = 'econômico'
+      when 1..2
+        mapped_scores[key] = 'padrão'
+      else
+        mapped_scores[key] = 'avancado'
+      end
+    end
+
+    mapped_scores
   end
+
 end
