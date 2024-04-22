@@ -8,6 +8,25 @@ class UsersController < ApplicationController
     end
   end
 
+  def calculate_plans
+    user = User.create(user_params)
+
+    #risk_calculator = RiskCalculatorService.new(user)
+    #risk_score = risk_calculator.calculate_risk
+
+    #life_plan = LifeInsuranceService.new(user).calculate_plan
+    #disability_plan = DisabilityInsuranceService.new(user).calculate_plan
+    #home_plan = HomeInsuranceService.new(user).calculate_plan
+    auto_plan = AutoService.new(user).call
+
+    render json: {
+      #life: life_plan,
+      #disability: disability_plan,
+      #home: home_plan,
+      auto: auto_plan
+    }
+  end
+
   private
 
   def user_params

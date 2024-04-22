@@ -7,4 +7,5 @@ Rails.application.routes.draw do
   # root "articles#index"
   root to: redirect('/api-docs')
   post '/calculate', to: 'users#create'
+  post '/calculate-scores', to: 'users#calculate_plans'
 end
