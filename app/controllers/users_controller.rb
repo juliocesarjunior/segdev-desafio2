@@ -8,29 +8,29 @@ class UsersController < ApplicationController
     end
   end
 
-  def calculate_plans
-    user = User.create(user_params)
-
-    #risk_calculator = RiskCalculatorService.new(user)
-    #risk_score = risk_calculator.calculate_risk
-
-    #life_plan = LifeInsuranceService.new(user).calculate_plan
-    #disability_plan = DisabilityInsuranceService.new(user).calculate_plan
-    #home_plan = HomeInsuranceService.new(user).calculate_plan
-    auto_plan = AutoService.new(user).call
-
-    render json: {
-      #life: life_plan,
-      #disability: disability_plan,
-      #home: home_plan,
-      auto: auto_plan
-    }
+  def create_user
+       user = User.new(user_params)
+      if user.save
+        render json: calculate_plans(user), status: :created
+      else
+        render json: user.errors, status: :unprocessable_entity
+      end 
   end
 
   private
 
   def user_params
     params.require(:user).permit!
+  end
+
+  def calculate_plans(user)
+    scores = {}
+
+    scores[:auto] = AutoService.new(user).call
+    scores[:home] = HomeService.new(user).call
+
+    #map_scores(scores)
+    scores
   end
 
   def calculate_insurance_scores(user)
@@ -62,10 +62,12 @@ class UsersController < ApplicationController
       scores[:disability] -= 1
       puts "## 3: #{scores}"
     end
+
     if user.vehicle && user.vehicle['year'] && Time.now.year - user.vehicle['year'] <= 5
       scores[:auto] += 1
       puts "## 4: #{scores}"
     end
+
     if user.income > 200_000
       scores.each_key { |key| scores[key] -= 1 }
       puts "## 5: #{scores}"
@@ -111,4 +113,22 @@ class UsersController < ApplicationController
     mapped_scores
   end
 
+end
+
+def map_scores(scores)
+  mapped_scores = {}
+  scores.each do |key, value|
+    case value
+    when 'inelegivel'
+      mapped_scores[key] = 'inelegivel'
+    when -Float::INFINITY..0
+      mapped_scores[key] = 'econômico'
+    when 1..2
+      mapped_scores[key] = 'padrão'
+    else
+      mapped_scores[key] = 'avancado'
+    end
+  end
+
+  mapped_scores
 end

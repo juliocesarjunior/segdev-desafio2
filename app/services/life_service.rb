@@ -1,9 +1,23 @@
-class LifeService
-  def initialize(user)
-    @user = user
-  end
+class LifeService < ScoreService
+  def call
+    scores = initial_scores
 
-  def calculate_plan
-    # Implementar o cálculo do plano de seguro de automóvel conforme as regras fornecidas
+    if user.dependents > 0
+      scores += 1
+    end
+
+    if user.marital_status == 'married'
+      scores += 1
+    end
+
+    if user.age > 60 || user.income <= 0
+      scores = 'inelegivel'
+    elsif user.age < 30
+      scores -= 2
+    elsif user.age >= 30 && user.age <= 40
+      scores -= 1
+    end
+
+    scores
   end
 end

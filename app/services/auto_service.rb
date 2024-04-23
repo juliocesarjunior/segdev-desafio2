@@ -1,15 +1,15 @@
-class AutoService
-  def initialize(user)
-    @user = user
-  end
-
+class AutoService < ScoreService
   def call
-    initial_scores = @user.risk_questions.sum
-    score = initial_scores
-    score += 1 if @user.vehicle && Time.now.year - @user.vehicle['year'] <= 5
+    scores = initial_scores
+    puts "## base score: #{initial_scores}"
 
-    score = 'ineligible' if @user.vehicle.nil? || @user.vehicle.empty?
-
-    score # Return the score directly
+    if user.vehicle.nil? || user.vehicle.empty?
+      scores = 'inelegivel'
+    elsif user.vehicle && user.vehicle['year'] && Time.now.year - user.vehicle['year'] <= 5
+      scores += 1
+      calculate_score(scores)
+      puts "## calculate_score: #{scores}"      
+    end
+    scores
   end
 end
