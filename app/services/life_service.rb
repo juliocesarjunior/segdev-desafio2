@@ -10,14 +10,6 @@ class LifeService < ScoreService
       scores += 1
     end
 
-    if user.age > 60 || user.income <= 0
-      scores = 'inelegivel'
-    elsif user.age < 30
-      scores -= 2
-    elsif user.age >= 30 && user.age <= 40
-      scores -= 1
-    end
-
     scores
   end
 end
