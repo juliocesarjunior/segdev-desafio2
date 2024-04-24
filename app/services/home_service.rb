@@ -8,11 +8,7 @@ class HomeService < ScoreService
       if user.house && user.house['ownership_status'] == 'rented'
         scores += 1
       end
-
-      if user.marital_status == 'married'
-        scores -= 1
-      end
-      #calculate_score(scores)
+      scores = calculate_score(scores, user)
     end
 
     scores

@@ -5,7 +5,6 @@ class DisabilityService < ScoreService
     if user.age > 60 || user.income <= 0
       scores = 'inelegivel'
     else
-
       if user.house && user.house['ownership_status'] == 'rented'
         scores += 1
       end
@@ -17,6 +16,7 @@ class DisabilityService < ScoreService
       if user.marital_status == 'married'
         scores -= 1
       end
+      scores = calculate_score(scores, user)
 
     end
 

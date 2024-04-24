@@ -1,5 +1,5 @@
 class RiskScoreController < ApplicationController
-	def calculate_score
+	def calculate
 		data = JSON.parse(request.body.read)
 		insurance_scores = calculate_insurance_scores(data)
 		render json: insurance_scores
