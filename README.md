@@ -33,6 +33,9 @@ Para acessar a API, você pode utilizar programas como o Postman, Restfox, Insom
 ### Calculado o Base Score:
 Endpoint para Criação:
 POST `/calculate`
+ou
+POST `/calculate-scores`
+
 
 Exemplo do corpo da solicitação:
 ```bash

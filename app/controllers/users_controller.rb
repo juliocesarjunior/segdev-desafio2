@@ -2,19 +2,20 @@ class UsersController < ApplicationController
   def create
     user = User.new(user_params)
     if user.save
-      render json: calculate_insurance_scores(user), status: :created
+        render json: calculate_plans(user), status: :created
     else
       render json: user.errors, status: :unprocessable_entity
     end
   end
 
   def create_user
-       user = User.new(user_params)
-      if user.save
-        render json: calculate_plans(user), status: :created
-      else
-        render json: user.errors, status: :unprocessable_entity
-      end 
+    user = User.new(user_params)
+    if user.valid?
+      plans = calculate_plans(user)
+      render json: plans, status: :ok
+    else
+      render json: user.errors, status: :unprocessable_entity
+    end
   end
 
   private
