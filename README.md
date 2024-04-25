@@ -24,19 +24,26 @@ Agora com tudo configurado, basta executa `rails s`
 ## Documentação Swagger
 Para acessar a documentação Swagger da API, siga os passos abaixo:
 ```bash
+  http://localhost:3000/api-doc
+```
+
+## Documentação Swagger Test
+Para acessar a documentação Swagger da API, siga os passos abaixo:
+```bash
 	http://localhost:3000/api-doc
 ```
 
 ## Acesso via API
 Para acessar a API, você pode utilizar programas como o Postman, Restfox, Insomnia, entre outros.
-
-### Calculado o Base Score:
-Endpoint para Criação:
-POST `/calculate`
+```bash
+  http://localhost:3000/calculate
+```
 ou
-POST `/calculate-scores`
+```bash
+  http://localhost:3000/calculate-scores
+```
 
-
+## Entrada
 Exemplo do corpo da solicitação:
 ```bash
 {
