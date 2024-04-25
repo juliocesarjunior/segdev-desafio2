@@ -21,18 +21,6 @@ Siga os passos abaixo para configurar o sistema no seu computador.
 # Iniciando o projeto
 Agora com tudo configurado, basta executa `rails s`
 
-## Documentação Swagger
-Para acessar a documentação Swagger da API, siga os passos abaixo:
-```bash
-  http://localhost:3000/api-doc
-```
-
-## Documentação Swagger Test
-Para acessar a documentação Swagger da API, siga os passos abaixo:
-```bash
-	http://localhost:3000/api-doc
-```
-
 ## Acesso via API
 Para acessar a API, você pode utilizar programas como o Postman, Restfox, Insomnia, entre outros.
 ```bash
@@ -55,4 +43,10 @@ Exemplo do corpo da solicitação:
   "risk_questions": [0, 1, 0],
   "vehicle": {"year": 2018}
 }
+```
+
+## Documentação Swagger Test
+Para acessar a documentação Swagger da API, siga os passos abaixo:
+```bash
+  http://localhost:3000/api-doc
 ```
